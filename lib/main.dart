@@ -50,9 +50,9 @@ const String fixedHost = "http://example.com:11434";
 // use model or not, if false selector is shown
 const bool useModel = false;
 // model name as string, must be valid ollama model!
-const String fixedModel = "gemma";
+const String fixedModel = "minimax-m2:cloud";
 // recommended models, shown with a star in model selector
-const List<String> recommendedModels = ["gemma", "llama3"];
+const List<String> recommendedModels = ["minimax-m2:cloud", "qwen3-coder:480b-cloud"];
 // allow opening of settings
 const bool allowSettings = true;
 // allow multiple chats
