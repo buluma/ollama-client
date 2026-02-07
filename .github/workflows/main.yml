@@ -10,6 +10,8 @@ on:
       - '**/CHANGELOG.md'
     tags_ignore:
       - '*'
+  release:
+    types: [created]
 
   workflow_dispatch:
 
@@ -33,11 +35,51 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Build Release APK
+      - name: Build Release APK (for Releases)
+        if: github.event_name == 'release'
+        run: flutter build apk --release --android-skip-build-dependency-validation
+
+      - name: Build Debug APK (for non-Release builds)
+        if: github.event_name != 'release'
         run: flutter build apk --debug --android-skip-build-dependency-validation
 
-      - name: Upload APK
+      - name: Create Release
+        id: create_release
+        if: github.event_name == 'release'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-release.apk
+          asset_name: ollama-app-v${{ github.ref_name }}.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload APK as Release Asset
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-release.apk
+          asset_name: ollama-app-v${{ github.ref_name }}.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload Debug APK as Artifact (for non-release builds)
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: ollama-custom-apk
+          name: ollama-custom-apk-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
