@@ -87,6 +87,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tooltipStopStreaming => 'Stop streaming';
 
   @override
+  String get tooltipRetryMessage => 'Regenerate response';
+
+  @override
   String get noModelSelected => '未选择模型';
 
   @override

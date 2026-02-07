@@ -262,6 +262,12 @@ abstract class AppLocalizations {
   /// **'Stop streaming'**
   String get tooltipStopStreaming;
 
+  /// Tooltip for the retry message button
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate response'**
+  String get tooltipRetryMessage;
+
   /// Text displayed when no model is selected
   ///
   /// In en, this message translates to:

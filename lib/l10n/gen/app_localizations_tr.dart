@@ -87,6 +87,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tooltipStopStreaming => 'Stop streaming';
 
   @override
+  String get tooltipRetryMessage => 'Regenerate response';
+
+  @override
   String get noModelSelected => 'Model seçilmedi';
 
   @override

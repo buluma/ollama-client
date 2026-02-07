@@ -1280,41 +1280,103 @@ class _MainAppState extends State<MainApp> {
                               onMessageLongPress: (context, p1) async {
                                 selectionHaptic();
 
-                                if (!(prefs!.getBool("enableEditing") ??
-                                    true)) {
-                                  return;
-                                }
+                                if (!chatAllowed) return; // Prevent actions while streaming
 
-                                var index = -1;
-                                if (!chatAllowed) return;
-                                for (var i = 0; i < messages.length; i++) {
-                                  if (messages[i].id == p1.id) {
-                                    index = i;
-                                    break;
+                                if (p1.author == assistant) {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return Container(
+                                            padding: const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                top: 16),
+                                            child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(
+                                                      width: double.infinity,
+                                                      child: OutlinedButton.icon(
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop();
+                                                            retryMessage(p1.id, setState);
+                                                          },
+                                                          icon: const Icon(Icons.refresh_rounded),
+                                                          label: Text(AppLocalizations.of(context)!.tooltipRetryMessage))),
+                                                  const SizedBox(height: 8),
+                                                  (prefs!.getBool("enableEditing") ?? true)
+                                                    ? SizedBox(
+                                                          width: double.infinity,
+                                                          child: OutlinedButton.icon(
+                                                              onPressed: () async {
+                                                                Navigator.of(context).pop();
+                                                                var index = -1;
+                                                                for (var i = 0; i < messages.length; i++) {
+                                                                  if (messages[i].id == p1.id) {
+                                                                    index = i;
+                                                                    break;
+                                                                  }
+                                                                }
+
+                                                                var text = (messages[index] as types.TextMessage).text;
+                                                                var input = await prompt(
+                                                                  context,
+                                                                  title: AppLocalizations.of(context)!.dialogEditMessageTitle,
+                                                                  value: text,
+                                                                  keyboard: TextInputType.multiline,
+                                                                  maxLines: (text.length >= 100)
+                                                                      ? 10
+                                                                      : ((text.length >= 50) ? 5 : 3),
+                                                                );
+                                                                if (input == "") return;
+
+                                                                messages[index] = types.TextMessage(
+                                                                  author: p1.author,
+                                                                  createdAt: p1.createdAt,
+                                                                  id: p1.id,
+                                                                  text: input,
+                                                                );
+                                                                setState(() {});
+                                                              },
+                                                              icon: const Icon(Icons.edit_rounded),
+                                                              label: Text(AppLocalizations.of(context)!.dialogEditMessageTitle)))
+                                                          : const SizedBox.shrink(),
+                                                  const SizedBox(height: 16)
+                                                ]));
+                                      });
+                                } else if (p1.author == user) {
+                                  if (!(prefs!.getBool("enableEditing") ?? true)) {
+                                    return;
                                   }
+
+                                  var index = -1;
+                                  for (var i = 0; i < messages.length; i++) {
+                                    if (messages[i].id == p1.id) {
+                                      index = i;
+                                      break;
+                                    }
+                                  }
+
+                                  var text = (messages[index] as types.TextMessage).text;
+                                  var input = await prompt(
+                                    context,
+                                    title: AppLocalizations.of(context)!.dialogEditMessageTitle,
+                                    value: text,
+                                    keyboard: TextInputType.multiline,
+                                    maxLines: (text.length >= 100)
+                                        ? 10
+                                        : ((text.length >= 50) ? 5 : 3),
+                                  );
+                                  if (input == "") return;
+
+                                  messages[index] = types.TextMessage(
+                                    author: p1.author,
+                                    createdAt: p1.createdAt,
+                                    id: p1.id,
+                                    text: input,
+                                  );
+                                  setState(() {});
                                 }
-
-                                var text =
-                                    (messages[index] as types.TextMessage).text;
-                                var input = await prompt(
-                                  context,
-                                  title: AppLocalizations.of(context)!
-                                      .dialogEditMessageTitle,
-                                  value: text,
-                                  keyboard: TextInputType.multiline,
-                                  maxLines: (text.length >= 100)
-                                      ? 10
-                                      : ((text.length >= 50) ? 5 : 3),
-                                );
-                                if (input == "") return;
-
-                                messages[index] = types.TextMessage(
-                                  author: p1.author,
-                                  createdAt: p1.createdAt,
-                                  id: p1.id,
-                                  text: input,
-                                );
-                                setState(() {});
                               },
                               onAttachmentPressed: (!multimodal)
                                   ? (prefs?.getBool("voiceModeEnabled") ??

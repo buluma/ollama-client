@@ -1,21 +1,26 @@
 {
   "de": [
-    "tooltipStopStreaming"
+    "tooltipStopStreaming",
+    "tooltipRetryMessage"
   ],
 
   "fa": [
-    "tooltipStopStreaming"
+    "tooltipStopStreaming",
+    "tooltipRetryMessage"
   ],
 
   "it": [
-    "tooltipStopStreaming"
+    "tooltipStopStreaming",
+    "tooltipRetryMessage"
   ],
 
   "tr": [
-    "tooltipStopStreaming"
+    "tooltipStopStreaming",
+    "tooltipRetryMessage"
   ],
 
   "zh": [
-    "tooltipStopStreaming"
+    "tooltipStopStreaming",
+    "tooltipRetryMessage"
   ]
 }
