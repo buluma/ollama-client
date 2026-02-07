@@ -66,6 +66,7 @@ String? model;
 String? host;
 
 bool multimodal = false;
+bool stopStreaming = false;
 
 List<types.Message> messages = [];
 String? chatUuid;
@@ -959,6 +960,18 @@ class _MainAppState extends State<MainApp> {
                               additionalCondition: messages.isNotEmpty);
                         },
                         icon: const Icon(Icons.restart_alt_rounded))
+                    : const SizedBox.shrink(),
+                (!chatAllowed)
+                    ? IconButton(
+                        enableFeedback: false,
+                        onPressed: () {
+                          selectionHaptic();
+                          setState(() {
+                            stopStreaming = true;
+                          });
+                        },
+                        tooltip: AppLocalizations.of(context)!.tooltipStopStreaming,
+                        icon: const Icon(Icons.stop_rounded))
                     : const SizedBox.shrink()
               ]),
               bottom: PreferredSize(

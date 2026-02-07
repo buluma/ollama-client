@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ollama_app/worker/clients.dart';
 
+import '../main.dart';
 import 'haptic.dart';
 import 'setter.dart';
 import '../main.dart';
@@ -232,6 +233,11 @@ Future<String> send(String value, BuildContext context, Function setState,
                   .round()));
 
       await for (final res in stream) {
+        if (stopStreaming) {
+          stopStreaming = false;
+          chatAllowed = true;
+          return "";
+        }
         text += (res.message.content);
         for (var i = 0; i < messages.length; i++) {
           if (messages[i].id == newId) {
