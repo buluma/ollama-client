@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ollama_app/worker/clients.dart';
 
-import '../main.dart';
 import 'haptic.dart';
 import 'setter.dart';
 import '../main.dart';
