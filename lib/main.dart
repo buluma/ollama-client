@@ -973,12 +973,23 @@ class _MainAppState extends State<MainApp> {
                               ),
                               const Expanded(child: SizedBox(height: 200))
                             ])
-                  : Center(
-                      child: Text(
-                          AppLocalizations.of(context)!.appTitle,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.4))),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                                AppLocalizations.of(context)!.appTitle,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.4)),
+                          ),
+                        ),
+                        selector,
+                        const SizedBox(width: 8),
+                      ],
+                    ),
               actions: desktopLayoutRequired(context)
                   ? desktopControlsActions(context, [
                       const SizedBox(width: 4),
