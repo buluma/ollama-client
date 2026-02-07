@@ -1051,15 +1051,19 @@ class _MainAppState extends State<MainApp> {
                                         right: 23,
                                         top: 17,
                                         bottom: 17),
-                                    child: Theme(
-                                      data: Theme.of(context).copyWith(
-                                          scrollbarTheme:
-                                              const ScrollbarThemeData(
-                                                  thumbColor:
-                                                      WidgetStatePropertyAll(
-                                                          Colors.grey))),
-                                      child: MarkdownBody(
-                                          data: text,
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Theme(
+                                            data: Theme.of(context).copyWith(
+                                                scrollbarTheme:
+                                                    const ScrollbarThemeData(
+                                                        thumbColor:
+                                                            WidgetStatePropertyAll(
+                                                                Colors.grey))),
+                                            child: MarkdownBody(
+                                                data: text,
                                           onTapLink: (text, href, title) async {
                                             selectionHaptic();
                                             try {
@@ -1207,7 +1211,17 @@ class _MainAppState extends State<MainApp> {
                                                       code: const TextStyle(color: Colors.black, backgroundColor: Colors.white),
                                                       codeblockDecoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
                                                       horizontalRuleDecoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey[200]!, width: 1))))),
-                                    ));
+                                    )),
+                                    (p0.author == assistant) ?
+                                      IconButton(
+                                        onPressed: () {
+                                          retryMessage(p0.id, setState);
+                                        },
+                                        icon: const Icon(Icons.refresh_rounded),
+                                        tooltip: AppLocalizations.of(context)!.tooltipRetryMessage,
+                                      ) : const SizedBox.shrink(),
+                                  ],
+                                ));
                               },
                               imageMessageBuilder: (p0,
                                   {required messageWidth}) {

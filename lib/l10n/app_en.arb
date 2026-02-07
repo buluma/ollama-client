@@ -130,6 +130,11 @@
         "description": "Tooltip for the stop streaming button",
         "context": "Visible in the chat view"
     },
+    "tooltipRetryMessage": "Regenerate response",
+    "@tooltipRetryMessage": {
+        "description": "Tooltip for the retry message button",
+        "context": "Visible in the chat view"
+    },
     "noModelSelected": "No model selected",
     "@noModelSelected": {
         "description": "Text displayed when no model is selected",

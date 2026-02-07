@@ -333,3 +333,44 @@ Future<String> send(String value, BuildContext context, Function setState,
   chatAllowed = true;
   return text;
 }
+
+Future<void> retryMessage(String messageId, Function setState) async {
+  selectionHaptic();
+  if (!chatAllowed) return; // Prevent retrying while another message is streaming
+
+  int aiMessageIndex = -1;
+  for (int i = 0; i < messages.length; i++) {
+    if (messages[i].id == messageId) {
+      aiMessageIndex = i;
+      break;
+    }
+  }
+
+  if (aiMessageIndex == -1) return; // Message not found
+
+  // Remove the AI message and all subsequent messages (since messages are reversed)
+  messages.removeRange(0, aiMessageIndex + 1);
+
+  // The next message in the list should be the user message we want to retry
+  if (messages.isEmpty || messages[0].author.id != user.id) {
+    debugPrint("Error: Could not find preceding user message for retry.");
+    return;
+  }
+
+  // Get the content of the user message
+  String userMessageContent = (messages[0] as types.TextMessage).text;
+
+  // Remove the user message from the current list, as send() will re-add it
+  messages.removeAt(0);
+
+  saveChat(chatUuid!, setState);
+  setState(() {});
+
+  // Call send to regenerate the response
+  if (mainContext != null) {
+    send(userMessageContent, mainContext!, setState);
+  } else {
+    debugPrint("Error: mainContext is null during retryMessage.");
+  }
+}
+
