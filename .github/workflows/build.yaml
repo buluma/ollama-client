@@ -72,7 +72,7 @@ jobs:
         run: flutter build apk --split-debug-info=build/debugAndroid ${{ github.event.inputs.obfuscate == 'true' && '--obfuscate' || '' }}
       - name: Preparing files
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/ollama-android-v${{ needs.analyze.outputs.result }}.apk
+          cp build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/ollama-android-v${{ needs.analyze.outputs.result }}.apk
       - name: Uploading APK
         uses: actions/upload-artifact@v4
         with:
