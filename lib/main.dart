@@ -872,57 +872,98 @@ class _MainAppState extends State<MainApp> {
                       : const Icon(Icons.expand_more_rounded)
                 ])));
 
+    Widget mobileTitle = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(AppLocalizations.of(context)!.appTitle,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+          ),
+        ),
+        selector,
+        const SizedBox(width: 8),
+      ],
+    );
+
     return WindowBorder(
       color: Theme.of(context).colorScheme.surface,
       child: Scaffold(
+          backgroundColor: Colors.black,
           appBar: AppBar(
               titleSpacing: 0,
-              title: Row(
-                  children: desktopFeature()
-                      ? desktopLayoutRequired(context)
-                          ? [
-                              SizedBox(
-                                  width: 304, height: 200, child: MoveWindow()),
-                              SizedBox(
-                                  height: 200,
-                                  child: AnimatedOpacity(
-                                      opacity: menuVisible ? 1.0 : 0.0,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      child: VerticalDivider(
-                                          width: 2,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withAlpha(20)))),
-                              AnimatedOpacity(
-                                opacity: desktopTitleVisible ? 1.0 : 0.0,
-                                duration: desktopTitleVisible
-                                    ? const Duration(milliseconds: 300)
-                                    : const Duration(milliseconds: 0),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: selector,
-                                ),
-                              ),
-                              Expanded(
-                                  child: SizedBox(
-                                      height: 200, child: MoveWindow()))
-                            ]
+              leadingWidth: desktopLayoutRequired(context) ? 0 : 120,
+              leading: desktopLayoutRequired(context)
+                  ? null
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: BorderSide(
+                                color: Colors.white.withAlpha(40)),
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 8),
+                          ),
+                          child: const Text("Sign In"),
+                        ),
+                      ),
+                    ),
+              title: desktopLayoutRequired(context)
+                  ? Row(
+                      children: desktopFeature()
+                          ? desktopLayoutRequired(context)
+                              ? [
+                                  SizedBox(
+                                      width: 304,
+                                      height: 200,
+                                      child: MoveWindow()),
+                                  SizedBox(
+                                      height: 200,
+                                      child: AnimatedOpacity(
+                                          opacity: menuVisible ? 1.0 : 0.0,
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          child: VerticalDivider(
+                                              width: 2,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withAlpha(20)))),
+                                  AnimatedOpacity(
+                                    opacity: desktopTitleVisible ? 1.0 : 0.0,
+                                    duration: desktopTitleVisible
+                                        ? const Duration(milliseconds: 300)
+                                        : const Duration(milliseconds: 0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: selector,
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: SizedBox(
+                                          height: 200, child: MoveWindow()))
+                                ]
+                              : [
+                                  SizedBox(
+                                      width: 90,
+                                      height: 200,
+                                      child: MoveWindow()),
+                                  Expanded(
+                                      child: SizedBox(
+                                          height: 200, child: MoveWindow())),
+                                  selector,
+                                  Expanded(
+                                      child: SizedBox(
+                                          height: 200, child: MoveWindow()))
+                                ]
                           : [
-                              SizedBox(
-                                  width: 90, height: 200, child: MoveWindow()),
-                              Expanded(
-                                  child: SizedBox(
-                                      height: 200, child: MoveWindow())),
-                              selector,
-                              Expanded(
-                                  child: SizedBox(
-                                      height: 200, child: MoveWindow()))
-                            ]
-                      : desktopLayoutRequired(context)
-                          ? [
-                              // bottom left tile
                               const SizedBox(width: 304, height: 200),
                               SizedBox(
                                   height: 200,
@@ -947,34 +988,41 @@ class _MainAppState extends State<MainApp> {
                                 ),
                               ),
                               const Expanded(child: SizedBox(height: 200))
-                            ]
-                          : [Expanded(child: selector)]),
-              actions: desktopControlsActions(context, [
-                const SizedBox(width: 4),
-                allowMultipleChats
-                    ? IconButton(
-                        enableFeedback: false,
-                        onPressed: () {
-                          selectionHaptic();
-                          if (!chatAllowed) return;
-                          deleteChatDialog(context, setState,
-                              additionalCondition: messages.isNotEmpty);
-                        },
-                        icon: const Icon(Icons.restart_alt_rounded))
-                    : const SizedBox.shrink(),
-                (!chatAllowed)
-                    ? IconButton(
-                        enableFeedback: false,
-                        onPressed: () {
-                          selectionHaptic();
-                          setState(() {
-                            stopStreaming = true;
-                          });
-                        },
-                        tooltip: AppLocalizations.of(context)!.tooltipStopStreaming,
-                        icon: const Icon(Icons.stop_rounded))
-                    : const SizedBox.shrink()
-              ]),
+                            ])
+                  : mobileTitle,
+              actions: desktopLayoutRequired(context)
+                  ? desktopControlsActions(context, [
+                      const SizedBox(width: 4),
+                      allowMultipleChats
+                          ? IconButton(
+                              enableFeedback: false,
+                              onPressed: () {
+                                selectionHaptic();
+                                if (!chatAllowed) return;
+                                deleteChatDialog(context, setState,
+                                    additionalCondition: messages.isNotEmpty);
+                              },
+                              icon: const Icon(Icons.restart_alt_rounded))
+                          : const SizedBox.shrink(),
+                      (!chatAllowed)
+                          ? IconButton(
+                              enableFeedback: false,
+                              onPressed: () {
+                                selectionHaptic();
+                                setState(() {
+                                  stopStreaming = true;
+                                });
+                              },
+                              tooltip: AppLocalizations.of(context)!
+                                  .tooltipStopStreaming,
+                              icon: const Icon(Icons.stop_rounded))
+                          : const SizedBox.shrink()
+                    ])
+                  : [
+                      IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.edit_rounded))
+                    ],
               bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(1),
                   child: (!chatAllowed && model != null)
@@ -991,48 +1039,55 @@ class _MainAppState extends State<MainApp> {
                                       .withAlpha(20)))
                           : const SizedBox.shrink()),
               automaticallyImplyLeading: !desktopLayoutRequired(context)),
-          body: Row(
-            children: [
-              desktopLayoutRequired(context)
-                  ? SizedBox(
-                      width: 304,
-                      height: double.infinity,
-                      child: VisibilityDetector(
-                          key: const Key("menuVisible"),
-                          onVisibilityChanged: (VisibilityInfo info) {
-                            if (settingsOpen) return;
-                            menuVisible = info.visibleFraction > 0;
-                            try {
-                              setState(() {});
-                            } catch (_) {}
-                          },
-                          child: AnimatedOpacity(
-                              opacity: menuVisible ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 300),
-                              child: ListView(
-                                  children: sidebar(context, setState)))))
-                  : const SizedBox.shrink(),
-              desktopLayout(context)
-                  ? AnimatedOpacity(
-                      opacity: menuVisible ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: VerticalDivider(
-                          width: 2,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withAlpha(20)))
-                  : const SizedBox.shrink(),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Flexible(
-                        child: Container(
-                          constraints: const BoxConstraints(maxWidth: 1000),
-                          child: Chat(
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF0B0B0B), Color(0xFF111111)]),
+            ),
+            child: Row(
+              children: [
+                desktopLayoutRequired(context)
+                    ? SizedBox(
+                        width: 304,
+                        height: double.infinity,
+                        child: VisibilityDetector(
+                            key: const Key("menuVisible"),
+                            onVisibilityChanged: (VisibilityInfo info) {
+                              if (settingsOpen) return;
+                              menuVisible = info.visibleFraction > 0;
+                              try {
+                                setState(() {});
+                              } catch (_) {}
+                            },
+                            child: AnimatedOpacity(
+                                opacity: menuVisible ? 1.0 : 0.0,
+                                duration: const Duration(milliseconds: 300),
+                                child: ListView(
+                                    children: sidebar(context, setState)))))
+                    : const SizedBox.shrink(),
+                desktopLayout(context)
+                    ? AnimatedOpacity(
+                        opacity: menuVisible ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 300),
+                        child: VerticalDivider(
+                            width: 2,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(20)))
+                    : const SizedBox.shrink(),
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Flexible(
+                          child: Container(
+                            constraints: const BoxConstraints(maxWidth: 1000),
+                            child: Chat(
                               messages: messages,
                               key: chatKey,
                               textMessageBuilder: (p0,
@@ -1682,9 +1737,15 @@ class _MainAppState extends State<MainApp> {
                                               : 700
                                           : 440)
                                   : DarkChatTheme(
-                                      backgroundColor: themeDark().colorScheme.surface,
-                                      primaryColor: themeDark().colorScheme.primary.withAlpha(40),
-                                      secondaryColor: themeDark().colorScheme.primary.withAlpha(20),
+                                      backgroundColor: Colors.transparent,
+                                      primaryColor: themeDark()
+                                          .colorScheme
+                                          .primary
+                                          .withAlpha(50),
+                                      secondaryColor: themeDark()
+                                          .colorScheme
+                                          .primary
+                                          .withAlpha(30),
                                       attachmentButtonIcon: !multimodal
                                           ? (prefs?.getBool("voiceModeEnabled") ?? false)
                                               ? Icon(Icons.headphones_rounded, color: Theme.of(context).iconTheme.color)
@@ -1693,27 +1754,37 @@ class _MainAppState extends State<MainApp> {
                                       sendButtonIcon: SizedBox(
                                         height: 24,
                                         child: CircleAvatar(
-                                            backgroundColor: Theme.of(context)
-                                                .iconTheme
-                                                .color,
+                                            backgroundColor:
+                                                const Color(0xFFE7E7E7),
                                             radius: 12,
                                             child: Icon(
                                                 Icons.arrow_upward_rounded,
-                                                color: (prefs?.getBool(
-                                                            "useDeviceTheme") ??
-                                                        false)
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .surface
-                                                    : null)),
+                                                color: Colors.black)),
                                       ),
                                       sendButtonMargin: EdgeInsets.zero,
                                       attachmentButtonMargin: EdgeInsets.zero,
-                                      inputBackgroundColor: themeDark().colorScheme.onSurface.withAlpha(40),
-                                      inputTextColor: themeDark().colorScheme.onSurface,
-                                      inputBorderRadius: BorderRadius.circular(32),
-                                      inputPadding: const EdgeInsets.all(16),
-                                      inputMargin: EdgeInsets.only(left: !desktopFeature(web: true) ? 8 : 6, right: !desktopFeature(web: true) ? 8 : 6, bottom: (MediaQuery.of(context).viewInsets.bottom == 0.0 && !desktopFeature(web: true)) ? 0 : 8),
+                                      inputBackgroundColor:
+                                          const Color(0xFF1C1C1E),
+                                      inputTextColor: Colors.white70,
+                                      inputBorderRadius:
+                                          BorderRadius.circular(28),
+                                      inputPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 18, vertical: 14),
+                                      inputMargin: EdgeInsets.only(
+                                          left: !desktopFeature(web: true)
+                                              ? 16
+                                              : 10,
+                                          right: !desktopFeature(web: true)
+                                              ? 16
+                                              : 10,
+                                          bottom: (MediaQuery.of(context)
+                                                          .viewInsets
+                                                          .bottom ==
+                                                      0.0 &&
+                                                  !desktopFeature(web: true))
+                                              ? 12
+                                              : 8),
                                       messageMaxWidth: (MediaQuery.of(context).size.width >= 1000)
                                           ? (MediaQuery.of(context).size.width >= 1600)
                                               ? (MediaQuery.of(context).size.width >= 2200)
