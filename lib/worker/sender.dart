@@ -311,8 +311,8 @@ Future<String> send(String value, BuildContext context, Function setState,
   }
   //TODO: add functionality
   //
-  // chatKey!.currentState!
-  //     .scrollToMessage(messages[1].id, preferPosition: AutoScrollPosition.end);
+  // chatKey!.currentState!.scrollToMessage(messages[1].id,
+  //     preferPosition: AutoScrollPosition.end);
   if ((prefs!.getString("requestType") ?? "stream") == "stream") {
     if (onStream != null) {
       onStream(text, true);
@@ -358,7 +358,32 @@ Future<void> retryMessage(String messageId, Function setState) async {
   }
 
   // Get the content of the user message
-  String userMessageContent = (messages[0] as types.TextMessage).text;
+  String userMessageContent = "";
+  List<String> imageContents = [];
+
+  if (messages[0] is types.TextMessage) {
+    userMessageContent = (messages[0] as types.TextMessage).text;
+  } else if (messages[0] is types.ImageMessage) {
+    types.ImageMessage imageMessage = messages[0] as types.ImageMessage;
+    // Assuming image URI is always base64 or a file path that can be converted
+    String content;
+    if (imageMessage.uri.startsWith("data:image/png;base64,")) {
+      content = imageMessage.uri.removePrefix("data:image/png;base64,");
+    } else {
+      // If it's a file path, convert it to base64
+      // This assumes the file still exists and is accessible
+      content = base64.encode(await File(imageMessage.uri).readAsBytes());
+    }
+    imageContents.add(content);
+    // If there's accompanying text with the image, use it. Flutter Chat UI ImageMessage doesn't have text field directly.
+    // Assuming for now ImageMessage is purely image. If text is needed, it would be a separate message or a custom message type.
+    // For simplicity, we'll assume the text part of multimodal is sent as a separate text message or this is image-only.
+    // If we need to send text accompanying an image for retry, we would need to find the user's TextMessage that often accompanies it.
+    // Let's assume for now, retry on an ImageMessage means image-only prompt.
+  } else {
+    debugPrint("Error: Unsupported message type for retry.");
+    return;
+  }
 
   // Remove the user message from the current list, as send() will re-add it
   messages.removeAt(0);
@@ -366,11 +391,19 @@ Future<void> retryMessage(String messageId, Function setState) async {
   saveChat(chatUuid!, setState);
   setState(() {});
 
+  // Temporarily set the global images list for the send function
+  List<String> originalImages = List.from(images); // Save original state
+  images.clear();
+  images.addAll(imageContents);
+
   // Call send to regenerate the response
   if (mainContext != null) {
-    send(userMessageContent, mainContext!, setState);
+    await send(userMessageContent, mainContext!, setState);
   } else {
     debugPrint("Error: mainContext is null during retryMessage.");
   }
-}
 
+  // Restore global images list to original state after send completes
+  images.clear();
+  images.addAll(originalImages);
+}
