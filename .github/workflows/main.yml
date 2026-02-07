@@ -1,7 +1,21 @@
 name: Build APK
 
 on:
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - '**/README.md'
+      - '**/CHANGELOG.md'
+    tags_ignore:
+      - '*'
+
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   build:
