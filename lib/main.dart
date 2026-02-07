@@ -872,6 +872,22 @@ class _MainAppState extends State<MainApp> {
                       : const Icon(Icons.expand_more_rounded)
                 ])));
 
+    Widget mobileTitle = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(AppLocalizations.of(context)!.appTitle,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+          ),
+        ),
+        selector,
+        const SizedBox(width: 8),
+      ],
+    );
+
     return WindowBorder(
       color: Theme.of(context).colorScheme.surface,
       child: Scaffold(
@@ -973,23 +989,7 @@ class _MainAppState extends State<MainApp> {
                               ),
                               const Expanded(child: SizedBox(height: 200))
                             ])
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                                AppLocalizations.of(context)!.appTitle,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.4)),
-                          ),
-                        ),
-                        selector,
-                        const SizedBox(width: 8),
-                      ],
-                    ),
+                  : mobileTitle,
               actions: desktopLayoutRequired(context)
                   ? desktopControlsActions(context, [
                       const SizedBox(width: 4),
