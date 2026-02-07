@@ -166,6 +166,7 @@ class _AppState extends State<App> {
       return StatefulBuilder(builder: (context, setState) {
         setMainAppState = setState;
         return MaterialApp(
+            debugShowCheckedModeBanner: false,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             localeListResolutionCallback: (deviceLocales, supportedLocales) {
